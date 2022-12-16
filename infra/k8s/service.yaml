@@ -1,87 +1,85 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: news-api
+  name: $SERVICE_NAME
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: news-api
-  namespace: news-api
+  name: $SERVICE_NAME
+  namespace: $SERVICE_NAME
   labels:
-    app: news-api
+    app: $SERVICE_NAME
 spec:
   ports:
-  - port: 8080
-    targetPort: 8080
+  - port: $SERVICE_PORT
+    targetPort: $SERVICE_PORT
   selector:
-    app: news-api
+    app: $SERVICE_NAME
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: news-api
-  namespace: news-api
+  name: $SERVICE_NAME
+  namespace: $SERVICE_NAME
 type: Opaque
 data:
-  mongoHost: bW9uZ29kYitzcnY6Ly9lc2FzZTpUZXJtaW5hdG9yMTZAdGVzdGNsdXN0ZXIueG94eGdubS5tb25nb2RiLm5ldC8/cmV0cnlXcml0ZXM9dHJ1ZSZ3PW1ham9yaXR5
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: news-api-docker-registry
-  namespace: news-api
-data:
-  .dockerconfigjson: eyJhdXRocyI6eyJodHRwczovL2luZGV4LmRvY2tlci5pby92MS8iOnsidXNlcm5hbWUiOiJlc2FzZSIsInBhc3N3b3JkIjoiZGV2NmFsZXhhbmRlciIsImF1dGgiOiJaWE5oYzJVNlpHVjJObUZzWlhoaGJtUmxjZz09In19fQ==
-type: kubernetes.io/dockerconfigjson
+  mongoHost: $MONGO_HOST
+  rabbitMqHost: $RABBITMQ_HOST
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: news-api
-  namespace: news-api
+  name: $SERVICE_NAME
+  namespace: $SERVICE_NAME
 spec:
-  replicas: 1
+  replicas: $REPLICAS
   selector:
     matchLabels:
-      app: news-api
+      app: $SERVICE_NAME
   template:
     metadata:
-      namespace: news-api
+      namespace: $SERVICE_NAME
       labels:
-        app: news-api
+        app: $SERVICE_NAME
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "$SERVICE_PORT"
+        prometheus.io/path: "/metrics"
     spec:
-      imagePullSecrets:
-        - name: news-api-docker-registry
       containers:
-      - name: news-api
-        image: esase/news-api:1.8
+      - name: $SERVICE_NAME
+        image: $IMAGE_NAME
         imagePullPolicy: IfNotPresent
         env:
         - name: MONGO_HOST
           valueFrom:
               secretKeyRef:
-                name: news-api
+                name: $SERVICE_NAME
                 key: mongoHost
-
+        - name: RABBITMQ_HOST
+          valueFrom:
+              secretKeyRef:
+                name: $SERVICE_NAME
+                key: rabbitMqHost
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: news-api
-  namespace: news-api
+  name: $SERVICE_NAME
+  namespace: $SERVICE_NAME
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
   rules:
   - http:
       paths:
       - pathType: Prefix
-        path: "/news"
+        path: /$SERVICE_NAME(/|$)(.*)
         backend:
           service:
-            name: news-api
+            name: $SERVICE_NAME
             port:
-              number: 8080
+              number: $SERVICE_PORT
 ---

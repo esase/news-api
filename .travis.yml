@@ -1,0 +1,55 @@
+sudo: required
+
+language: node_js
+node_js:
+  - "16"
+
+jobs:
+  include:
+
+    - stage: test
+      install:
+        - yarn
+  
+      script:
+        - yarn lint
+        - yarn unit-test
+        - yarn integration-test
+
+    - stage: deploy
+      if: (branch = main) OR (branch = dev)
+      services:
+        - docker
+ 
+      env:
+        - SERVICE_NAME=news-api
+        - SERVICE_PORT=8080
+        - IMAGE_REGISTRY=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+        - IMAGE_NAME=$IMAGE_REGISTRY/$SERVICE_NAME:$TRAVIS_COMMIT
+        - REPLICAS=1
+        - TEST_CLUSTER=test-cluster
+        - PROD_CLUSTER=prod-cluster
+        - CLUSTER_NAME=$(if [ $TRAVIS_BRANCH = "main" ]; then echo $PROD_CLUSTER; else echo $TEST_CLUSTER; fi)
+ 
+      install:
+        # install kubectl
+        - curl -LO https://dl.k8s.io/release/v1.22.0/bin/linux/amd64/kubectl
+        - chmod +x ./kubectl
+        - sudo mv ./kubectl /usr/local/bin/kubectl
+
+        # install aws cli
+        - if ! [ -x "$(command -v aws)" ]; then curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" ; unzip awscliv2.zip ; sudo ./aws/install ; fi
+
+      before_script: 
+        - aws eks update-kubeconfig --region $AWS_DEFAULT_REGION --name $CLUSTER_NAME
+        - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $IMAGE_REGISTRY
+        - aws ecr describe-repositories --repository-names $SERVICE_NAME  --region $AWS_DEFAULT_REGION || aws ecr create-repository --repository-name $SERVICE_NAME  --region $AWS_DEFAULT_REGION
+
+      script:
+        docker build -f ./infra/docker/Dockerfile -t $SERVICE_NAME .
+
+      after_success:
+        - docker tag $SERVICE_NAME $IMAGE_NAME
+        - docker push $IMAGE_NAME
+        - envsubst < ./infra/k8s/service.yaml > k8s.yaml
+        - kubectl apply -f k8s.yaml
