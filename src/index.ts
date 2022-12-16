@@ -15,6 +15,8 @@ interface News {
 
 server.get('/', async () =>  newsCollection.find({}).toArray());
 
+server.get('/ping', async () =>  'pong');
+
 server.post<{ Body: News, Reply: News }>('/', async (request) => {
     const result = await newsCollection.insertOne({
         title: request.body.title,

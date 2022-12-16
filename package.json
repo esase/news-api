@@ -5,7 +5,9 @@
     "dev": "nodemon src/index.ts",
     "build": "rm -rf ./dist && tsc",
     "start": "node dist/src/index.js",
-    "lint": "eslint ./src"
+    "lint": "eslint ./src",
+    "unit-test": "echo 'no unit tests'",
+    "integration-test": "echo 'no integration tests'"
   },
   "devDependencies": {
     "@types/mongodb": "^4.0.7",
