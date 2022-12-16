@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "outDir": "./dist",
+        "target": "esnext",
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "useUnknownInCatchVariables": false,
+        "esModuleInterop": true,
+        "resolveJsonModule": true
+    }
+}

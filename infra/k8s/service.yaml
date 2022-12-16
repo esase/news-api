@@ -1,0 +1,87 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: news-api
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: news-api
+  namespace: news-api
+  labels:
+    app: news-api
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: news-api
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: news-api
+  namespace: news-api
+type: Opaque
+data:
+  mongoHost: bW9uZ29kYitzcnY6Ly9lc2FzZTpUZXJtaW5hdG9yMTZAdGVzdGNsdXN0ZXIueG94eGdubS5tb25nb2RiLm5ldC8/cmV0cnlXcml0ZXM9dHJ1ZSZ3PW1ham9yaXR5
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: news-api-docker-registry
+  namespace: news-api
+data:
+  .dockerconfigjson: eyJhdXRocyI6eyJodHRwczovL2luZGV4LmRvY2tlci5pby92MS8iOnsidXNlcm5hbWUiOiJlc2FzZSIsInBhc3N3b3JkIjoiZGV2NmFsZXhhbmRlciIsImF1dGgiOiJaWE5oYzJVNlpHVjJObUZzWlhoaGJtUmxjZz09In19fQ==
+type: kubernetes.io/dockerconfigjson
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: news-api
+  namespace: news-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: news-api
+  template:
+    metadata:
+      namespace: news-api
+      labels:
+        app: news-api
+    spec:
+      imagePullSecrets:
+        - name: news-api-docker-registry
+      containers:
+      - name: news-api
+        image: esase/news-api:1.8
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: MONGO_HOST
+          valueFrom:
+              secretKeyRef:
+                name: news-api
+                key: mongoHost
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: news-api
+  namespace: news-api
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - pathType: Prefix
+        path: "/news"
+        backend:
+          service:
+            name: news-api
+            port:
+              number: 8080
+---
