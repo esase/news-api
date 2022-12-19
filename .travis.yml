@@ -2,7 +2,7 @@ sudo: required
 
 language: node_js
 node_js:
-  - lts/17
+  - lts/16
 
 jobs:
   include:
