@@ -2,7 +2,7 @@ sudo: required
 
 language: node_js
 node_js:
-  - "14"
+  - lts/17
 
 jobs:
   include:
@@ -17,7 +17,7 @@ jobs:
         - yarn integration-test
 
     - stage: deploy
-      if: (branch = main) OR (branch = dev) AND (type != pull_request)
+      if: (branch = main) OR (branch = dev)
       services:
         - docker
  
