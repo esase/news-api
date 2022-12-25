@@ -41,6 +41,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["fastify", "npm:3.28.0"],\
             ["mongodb", "npm:4.12.1"],\
             ["nodemon", "npm:2.0.15"],\
+            ["prom-client", "npm:14.1.0"],\
             ["ts-node", "virtual:b4a98871cd5582d9a614e605a0059bd07ce706d1fa62c72d0fd3aa87c44c27e0faa13f085554c6950b9981b80544f1959c622d0a7ac38e80163d86a77c57b90c#npm:10.9.1"],\
             ["typescript", "patch:typescript@npm%3A4.6.3#~builtin<compat/typescript>::version=4.6.3&hash=f456af"]\
           ],\
@@ -1737,6 +1738,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/binary-extensions-npm-2.2.0-180c33fec7-ccd267956c.zip/node_modules/binary-extensions/",\
           "packageDependencies": [\
             ["binary-extensions", "npm:2.2.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["bintrees", [\
+        ["npm:1.0.2", {\
+          "packageLocation": "./.yarn/cache/bintrees-npm-1.0.2-b28feeda03-56a52b7d36.zip/node_modules/bintrees/",\
+          "packageDependencies": [\
+            ["bintrees", "npm:1.0.2"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -3547,6 +3557,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["fastify", "npm:3.28.0"],\
             ["mongodb", "npm:4.12.1"],\
             ["nodemon", "npm:2.0.15"],\
+            ["prom-client", "npm:14.1.0"],\
             ["ts-node", "virtual:b4a98871cd5582d9a614e605a0059bd07ce706d1fa62c72d0fd3aa87c44c27e0faa13f085554c6950b9981b80544f1959c622d0a7ac38e80163d86a77c57b90c#npm:10.9.1"],\
             ["typescript", "patch:typescript@npm%3A4.6.3#~builtin<compat/typescript>::version=4.6.3&hash=f456af"]\
           ],\
@@ -3791,6 +3802,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/process-warning-npm-1.0.0-8b886c4a9d-c708a03241.zip/node_modules/process-warning/",\
           "packageDependencies": [\
             ["process-warning", "npm:1.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["prom-client", [\
+        ["npm:14.1.0", {\
+          "packageLocation": "./.yarn/cache/prom-client-npm-14.1.0-a4870792d6-88f8e67020.zip/node_modules/prom-client/",\
+          "packageDependencies": [\
+            ["prom-client", "npm:14.1.0"],\
+            ["tdigest", "npm:0.1.2"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -4364,6 +4385,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["minizlib", "npm:2.1.2"],\
             ["mkdirp", "npm:1.0.4"],\
             ["yallist", "npm:4.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["tdigest", [\
+        ["npm:0.1.2", {\
+          "packageLocation": "./.yarn/cache/tdigest-npm-0.1.2-b73cfcf726-44de824675.zip/node_modules/tdigest/",\
+          "packageDependencies": [\
+            ["tdigest", "npm:0.1.2"],\
+            ["bintrees", "npm:1.0.2"]\
           ],\
           "linkType": "HARD"\
         }]\

@@ -1,6 +1,7 @@
 import fastify from 'fastify';
 import { MongoClient, ObjectId } from 'mongodb';
 import config from './config';
+import client from 'prom-client';
 
 const mongoClient = new MongoClient(config.mongoHost);
 const newsCollection = mongoClient.db().collection('news');
@@ -13,9 +14,23 @@ interface News {
     body: string;
 }
 
-server.get('/', async () =>  newsCollection.find({}).toArray());
+const register = new client.Registry();
+
+client.collectDefaultMetrics({
+    prefix: 'node_',
+    gcDurationBuckets: [0.001, 0.01, 0.1, 1, 2, 5],
+    register,
+    labels: { NODE_APP_INSTANCE: config.serviceName }
+});
+
+server.get('/metrics', async (request, result) =>  {
+    result.header('Content-Type', register.contentType);
+    result.send(await register.metrics());
+});
 
 server.get('/ping', async () =>  'pong');
+
+server.get('/', async () =>  newsCollection.find({}).toArray());
 
 server.post<{ Body: News, Reply: News }>('/', async (request) => {
     const result = await newsCollection.insertOne({

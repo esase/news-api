@@ -41,6 +41,10 @@ spec:
       namespace: $SERVICE_NAME
       labels:
         app: $SERVICE_NAME
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "$SERVICE_PORT"
+        prometheus.io/path: "/metrics"
     spec:
       containers:
       - name: $SERVICE_NAME
@@ -52,7 +56,6 @@ spec:
               secretKeyRef:
                 name: $SERVICE_NAME
                 key: mongoHost
-
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -60,14 +63,14 @@ metadata:
   name: $SERVICE_NAME
   namespace: $SERVICE_NAME
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
   rules:
   - http:
       paths:
       - pathType: Prefix
-        path: "/news"
+        path: /$SERVICE_NAME(/|$)(.*)
         backend:
           service:
             name: $SERVICE_NAME

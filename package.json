@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "fastify": "^3.27.4",
-    "mongodb": "^4.5.0"
+    "mongodb": "^4.5.0",
+    "prom-client": "^14.1.0"
   }
 }
