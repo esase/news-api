@@ -14,7 +14,7 @@ const app = async () => {
     const mongoClient = new MongoClient(config.mongoHost);
     const newsCollection = mongoClient.db().collection('news');
 
-    const rabbitMqConnection = await connect(config.rabbitUrl);
+    const rabbitMqConnection = await connect(config.rabbitMqHost);
     const rabbitMq = await rabbitMqConnection.createChannel();
 
     const server = fastify();

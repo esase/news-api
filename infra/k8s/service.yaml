@@ -24,7 +24,8 @@ metadata:
   namespace: $SERVICE_NAME
 type: Opaque
 data:
-  mongoHost: bW9uZ29kYitzcnY6Ly9lc2FzZTpUZXJtaW5hdG9yMTZAdGVzdGNsdXN0ZXIueG94eGdubS5tb25nb2RiLm5ldC8/cmV0cnlXcml0ZXM9dHJ1ZSZ3PW1ham9yaXR5
+  mongoHost: $MONGO_HOST
+  rabbitMqHost: $RABBITMQ_HOST
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -56,6 +57,11 @@ spec:
               secretKeyRef:
                 name: $SERVICE_NAME
                 key: mongoHost
+        - name: RABBITMQ_HOST
+          valueFrom:
+              secretKeyRef:
+                name: $SERVICE_NAME
+                key: rabbitMqHost
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
